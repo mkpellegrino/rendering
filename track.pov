@@ -5,7 +5,12 @@ global_settings{assumed_gamma 1.0}
 #include "textures.inc"
 #include "stones.inc"
 #include "woods.inc"
+#include "./track.inc"
+#include "./table.inc"
 #include "../fktr01.inc"
+#include "../house.inc"
+#include "../dog/dog.pov"
+//#include "../lamp/makelamp.pov"
 
 #declare BOT_MIDDLE_UP = 0;
 #declare TOP_MIDDLE_turn_left = 3000;
@@ -18,24 +23,23 @@ global_settings{assumed_gamma 1.0}
 #declare BOT_RIGHT_turn_right = 14790;
 #declare END_OF_TRACK = 15723;
 
-#declare starting_frame =  0;
+#declare FOV = 75; //                        << Field of view angle in degrees
+
+#declare starting_frame =  0; //             <<===  CHANGE THIS IF YOU WANT TO START SOMEWHERE OTHER THAN AT THE BEGINNING
 
 
 #declare one_fps = 30*clock + starting_frame;
 #declare two_fps = 15*clock + starting_frame;
 #declare ten_fps = 3*clock + starting_frame; // then total frames is 5241
+#declare fifteen_fps = 2*clock + starting_frame;
 #declare thirty_fps = clock + starting_frame;
 #declare Random_1 = seed(1153);
-
-
-
-
 
 // SETTINGS
 
 // USE THIS TO RENDER FRAMES STARTING 
 // AT SOMETHING OTHER THAN THE BEGINNING
-#declare my_clock = ten_fps;
+#declare my_clock = fifteen_fps; //             <<===  CHANGE THIS IF YOU WANT A SPECIFIC FRAMES/SERCOND
 
 // TEST_IMAGE
 #declare TEST_IMAGE=0;
@@ -69,191 +73,34 @@ global_settings{assumed_gamma 1.0}
   }
 #end
 
-
-
-
-#declare Table =
-union {                 // start of table union
-        lathe {
-                cubic_spline
-                14
-                <0,0> <1,0> <1,.25> <.5,.25> <.5,.75> 
-                <.75,1> <.5,1.25> <.5,1.5> <.5,3> <1,3.25>  
-                <2.5,3.5> <2.5,3.75> <0,3.75> <0,3.75>
-        }
-
-//*********************************************** Bench Top
-        #declare Cone =
-        cone {
-                <10,0,0>2 <0,0,0>1 
-        } 
-        
-        
-        #declare Benchtop =
-        difference {
-                cylinder {
-                        <0,0,0> <0,.25,0> 4.5
-                }
-        
-                cylinder {
-                        <0,-1,0> <0,1,0> 3.25
-                }                  
-        
-                #declare N = 3;
-                #declare C = 0;
-                #while ( C < N )
-                        object { Cone rotate (360/N*C)*y } 
-                        #declare C = C + 1;
-                #end   
-        } 
-        
-        object { Benchtop translate <0,1.5,0> }  
-
-//*********************************************** End of bench top
-//*********************************************** Start of bench legs
-        #declare Leg =
-        lathe {
-                cubic_spline 
-                6
-                <0,0> <0.5,0> <0.5,1> <0.3,2> <0.5,4> <0.2,5>
-        }          
-
-
-        #declare N = 3;
-        #declare C = 0;
-        #while ( C < N )
-                object {  Leg scale .4 translate <-3.5,0,1.5> rotate (360/N*C)*y } 
-                object {  Leg scale .4 translate <-3.5,0,-1.5> rotate (360/N*C)*y } 
-                #declare C = C + 1;
-        #end   
-//*********************************************** end of bench legs
-
-} // end of Table union 
-
-// This is the track plank definition
-// Px = Center x
-// Py = Center y
-// Pz = Center z
-// Pr = rotation
-#macro ctrPlank( Px, Py, Pz, Pr )
-box
-  {
-    // bottom left corner
-    <-1,0,-0.1>,
-    // top right corner
-    < 1,0.1,0.1>
-    texture
-    {
-      pigment
-      {
-	DMFDarkOak
-	scale 0.5
-	rotate y*90
-	// add a little bit of random
-	// spin to make it not-so-uniform
-	rotate x*(int(80*rand(Random_1))+5)
-      } // end pigment
-      finish
-      { 
-	phong 0.4 diffuse .5 ambient .2 reflection 0 
-      } // end finish
-    }  // end texture
-    rotate<0,Pr,0> translate<Px,Py,Pz>
-  } // end box
-#end // end macro
-
-
-// This macro will create a turn in the track
-// ttx = where the center of the rotation is (X)
-// tty = the height off of the ground
-// ttz = where the center of the rotation is (Z)
-// ttr = radius of turn
-// ttSTART = where on the unit circle the turn starts
-// ttFINISH = where on the unit circle the turn ends
-// ttStep = how much rotation ber plank (1.5 seems to work well)
-#macro turn_track(ttx,tty,ttz,ttr,ttSTART,ttFINISH,ttStep)
-#if(ttSTART<ttFINISH)
-#declare ITERATOR=ttSTART;
-#while(ITERATOR<=ttFINISH)
-ctrPlank(ttx+cos(ITERATOR*pi/180)*ttr,tty,ttz+sin(ITERATOR*pi/180)*ttr,-ITERATOR)
-#declare ITERATOR=ITERATOR+ttStep;
-#end
-#end
-#if(ttSTART>ttFINISH)
-#declare ITERATOR=ttSTART;
-#while(ITERATOR>=ttFINISH)
-ctrPlank(ttx+cos(ITERATOR*pi/180)*ttr,tty,ttz+sin(ITERATOR*pi/180)*ttr,-ITERATOR)
-#declare ITERATOR=ITERATOR-ttStep;
-#end
-#end
-#end
-
-
+// ======================================================================
 // Add some mist in the scene to make it look like it's morning time
-fog {
-    distance 150
-    color rgbt<0.7, 0.7, 0.7, 0.25>
-    fog_type 2
-    fog_offset 5
-    fog_alt 4
-    turbulence 0.2
-    turb_depth 0.2
-  }
-  
+fog {distance 1000 color rgbt<0.7, 0.7, 0.7, 0.25> fog_type 2 fog_offset 5 fog_alt 4 turbulence 0.2 turb_depth 0.2 }
+// ======================================================================
 
+// ======================================================================
 // This the light source (the Sun or some other star?)
-light_source{<0,0,0> color rgb<1,1,1> area_light <100,0,0><0,0,100> 10,10 adaptive 0 jitter translate<-50,100,0>}
+//light_source{<0,0,0> color rgb<1,1,1> area_light <100,0,0><0,0,100> 10,10 adaptive 0 jitter translate<-50,100,0>}
+light_source{<0,0,0> color rgb<1,1,1> area_light <100,0,0><0,0,100> 2,2 adaptive 1 jitter translate<-50,100,0>}
+// ======================================================================
 
-// This is the ground
-plane
-{ 
-  <0,1,0>,1 hollow 
-  texture
-  { 
-    pigment
-    {
-      bozo turbulence 0.92 
-      color_map
-      {
-	[0.00 rgb<0.05,0.15,0.45>]
-	[0.50 rgb<0.05,0.15,0.45>]
-	[0.70 rgb<1,1,1>]
-	[0.85 rgb<0.2,0.2,0.2>]
-	[1.00 rgb<0.5,0.5,0.5> ]
-      } // end color_map
-      scale<1,1,1.5>*2.5 translate<0,0,0>
-    } // end pigment
-    finish
-    {
-      ambient 1 diffuse 0 reflection 0
-    } // end finish
-  } // end texture
-  scale 5000
-} // end plane
+// ======================================================================
+// This is the SKY
+plane{<0,1,0>,1 hollow texture {pigment {bozo turbulence 0.92 color_map{[0.00 rgb<0.05,0.15,0.45>] [0.50 rgb<0.05,0.15,0.45>] [0.70 rgb<1,1,1>] [0.85 rgb<0.2,0.2,0.2>] [1.00 rgb<0.5,0.5,0.5> ]} scale<1,1,1.5>*2.5 translate<0,0,0> } finish{ambient 1 diffuse 0 reflection 0}} scale 5000}
+// ======================================================================
 
-// ground?
-plane
-{
-  <0,1,0>, 0.05 
-  texture
-  { 
-    pigment
-    { 
-      color DarkGreen
-    } // end pigment
-    normal
-    { 
-      bumps 0.75 scale 0.2
-    }  // end normal
-    finish
-    { 
-      reflection 0 phong 0.1 
-    }// end finish
-  } // end texture
-} // end plane
+// ======================================================================
+// this is the GROUND
+plane{<0,1,0>, 0.05 texture{pigment{color DarkGreen} normal{bumps 0.75 scale 0.2} finish{reflection 0 phong 0.05}}}
+// ======================================================================
 
 
+// Objects that are in the scene
 object { Table texture { PinkAlabaster } scale .15 translate<-10,0,108>} 
+//object { Lamp1 scale 0.04 translate <0,0,5>}
+object {splitlevel scale 0.5 translate<3, 0, 130>} // add a house
+object {splitlevel scale 0.5 rotate<0,90,0> translate<30, 0, 65>} // add a house
+object { dog scale 0.05 rotate<0,225,0> translate<-17.1,0,97>  }
 
 
 // lay out some track - 100 planks
@@ -291,7 +138,7 @@ turn_track(-10,0.01,0,10,180,360,1.5)
 turn_track(10,0.01,0,10,180,360,1.5)
 
 
-// if we want to have the lines of trees rendered then place the trees in the scene
+// if we want to have trees rendered then place the trees in the scene
 #if(YES_TREES=1)
 #declare ITERATOR=0;
 #while(ITERATOR<120)
@@ -334,25 +181,25 @@ object{treex08 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-18+rand(Ran
 #if( TEST_IMAGE=1 )
 camera
   {
-    location <-17, eyelevel, 30>
-    look_at <-17,eyelevel,0>
-    right x*image_width/image_height angle 100
+    location <0, eyelevel, 110>
+    look_at <0,eyelevel,0>
+    right x*image_width/image_height angle FOV
   }
 //==================================================
 #elseif( TOP_DOWN=1 )
   
   // we just want a view of the whole track
-camera
+camera 
   {
-    location <0, 100, 50>
+    location <0, 150, 50>
     look_at <0,0,50>
-    right x*image_width/image_height angle 100
+    right x*image_width/image_height angle 50
   }
 //#elseif(my_clock  15721 )
 
 //==================================================
 #elseif(my_clock > BOT_RIGHT_turn_right)
-//                                                      fourth turn
+//                                                          fourth turn
 //right turn at bottom (back to start from far right) 
 #declare T=(pi/930)*(my_clock-BOT_RIGHT_turn_right);
 camera{location <10*cos(T)+10, eyelevel+bounce, -10*sin(T) > 
@@ -361,25 +208,25 @@ camera{location <10*cos(T)+10, eyelevel+bounce, -10*sin(T) >
 #else
     look_at<10+14.14*cos(T+pi/4), eyelevel, -14.14*sin(T+pi/4) > 
 #end
-  right x*image_width/image_height angle 100} 
+  right x*image_width/image_height angle FOV} 
 //==================================================
-//                                                      second hill
+//                                                         second hill
 #elseif(my_clock > MID_RIGHT_down)
 // the right side hill - top to bottom
 // this stretch is 1500 frames long
 #declare T=(my_clock-MID_RIGHT_down)/15; 
 camera{ location <20,0.5+eyelevel+bounce +  5*sin( pi*T/100),50-T/2>
 look_at <20,eyelevel+ 5*sin( 0.02+pi*T/100),-T/2>
-right x*image_width/image_height angle 100}
+right x*image_width/image_height angle FOV}
 //==================================================
-//                                                      first hill
+//                                                         first hill
 #elseif(my_clock > TOP_RIGHT_down)
 // the right side hill - top to bottom
 // this stretch is 1500 frames long
 #declare T=(my_clock-TOP_RIGHT_down)/15; 
 camera{ location <20,eyelevel+bounce +  5*sin( pi*T/100),100-T/2>
 look_at <20,eyelevel+ 5*sin( 0.02+pi*T/100),50-T/2>
-right x*image_width/image_height angle 100}
+right x*image_width/image_height angle FOV}
 //================================================== 
 #elseif(my_clock > TOP_MIDDLE_turn_right)
 //                                                         third turn (to the right)
@@ -391,14 +238,14 @@ camera{location <10-10*cos(T), eyelevel+bounce, 100+10*sin(T) >
     look_at<10-14.14*cos(T+pi/4), eyelevel, 100+14.14*sin(T+pi/4) > 
 #end
   //look_at<10-10*cos(T+0.2), eyelevel, 100+10*sin(T+0.2) > 
-  right x*image_width/image_height angle 100} 
+  right x*image_width/image_height angle FOV} 
 //==================================================
 #elseif(my_clock > BOT_MIDDLE_UP_2 )
 //                                                         the first sequence repeated
 #declare T=(my_clock-BOT_MIDDLE_UP_2)/30;
 camera{ location <0,eyelevel+bounce,T>
 look_at <0,eyelevel,T + 3>
-right x*image_width/image_height angle 100}
+right x*image_width/image_height angle FOV}
 //==================================================
 #elseif(my_clock >= BOT_LEFT_turn_left )
 //                                                         second turn (@ 6930)
@@ -410,14 +257,14 @@ camera{location <-10 -10*cos(T), eyelevel+bounce, -10*sin(T) >
 #else
     look_at<-10-14.14*cos(T+pi/4), eyelevel, -14.14*sin(T+pi/4) > 
 #end
-  right x*image_width/image_height angle 100}
+  right x*image_width/image_height angle FOV}
 //==================================================
 #elseif(my_clock >= TOP_LEFT_down )
 //                                                         coming down the left side (@ 3930)
 #declare T=(my_clock-TOP_LEFT_down)/30; 
   camera{ location <-20,eyelevel+bounce,100-T>
   look_at <-20,eyelevel,97-T>  
-right x*image_width/image_height angle 100}
+right x*image_width/image_height angle FOV}
 //==================================================
 #elseif( my_clock >= TOP_MIDDLE_turn_left )
 //                                                         the first turn (@ 3000)
@@ -429,7 +276,7 @@ right x*image_width/image_height angle 100}
     #else
     look_at<-10+14.14*cos(T+pi/4), eyelevel, 100+14.14*sin(T+pi/4) > 
     #end
-  right x*image_width/image_height angle 100}
+  right x*image_width/image_height angle FOV}
   
   
   
@@ -439,6 +286,6 @@ right x*image_width/image_height angle 100}
 #declare T=(my_clock-0)/30;
 camera{ location <0,eyelevel+bounce,T>
   look_at<0, eyelevel, T+3>
-  right x*image_width/image_height angle 100}
+  right x*image_width/image_height angle FOV}
 #end
 //==================================================
