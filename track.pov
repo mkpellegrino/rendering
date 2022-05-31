@@ -25,7 +25,7 @@ global_settings{assumed_gamma 1.0}
 
 #declare FOV = 75; //                        << Field of view angle in degrees
 
-#declare starting_frame =  0; //             <<===  CHANGE THIS IF YOU WANT TO START SOMEWHERE OTHER THAN AT THE BEGINNING
+#declare starting_frame =  2800; //             <<===  CHANGE THIS IF YOU WANT TO START SOMEWHERE OTHER THAN AT THE BEGINNING
 
 
 #declare one_fps = 30*clock + starting_frame;
@@ -45,7 +45,7 @@ global_settings{assumed_gamma 1.0}
 #declare TEST_IMAGE=0;
 
 // do we want trees? 1=yes 0=no
-#declare YES_TREES=1;
+#declare YES_TREES=0;
 
 // do we just want a bird's eye view? 1=yes 0=no
 #declare TOP_DOWN=0;
@@ -266,15 +266,16 @@ camera{location <-10 -10*cos(T), eyelevel+bounce, -10*sin(T) >
   look_at <-20,eyelevel,97-T>  
 right x*image_width/image_height angle FOV}
 //==================================================
-#elseif( my_clock >= TOP_MIDDLE_turn_left )
+#elseif( my_clock >=  TOP_MIDDLE_turn_left )
 //                                                         the first turn (@ 3000)
 #declare T=(pi/930)*(my_clock-TOP_MIDDLE_turn_left);
   camera{location <-10 + 10*cos(T), eyelevel+bounce, 100+10*sin(T) >
   
-    #if( T > 900*(pi/930)*(my_clock-TOP_MIDDLE_turn_left) )
+    #if( T > 871*(pi/930)*(my_clock-TOP_MIDDLE_turn_left) )
       look_at<-20,eyelevel-0.25,97>
     #else
-    look_at<-10+14.14*cos(T+pi/4), eyelevel, 100+14.14*sin(T+pi/4) > 
+    //look_at<-10+14.14*cos(T+pi/4), eyelevel, 100+14.14*sin(T+pi/4) > 
+    look_at<-10+10*cos(T+0.095855*pi), eyelevel, 100+10*sin(T+0.095855*pi) > 
     #end
   right x*image_width/image_height angle FOV}
   
@@ -285,7 +286,11 @@ right x*image_width/image_height angle FOV}
 //                                                         the first stretch
 #declare T=(my_clock-0)/30;
 camera{ location <0,eyelevel+bounce,T>
+#if (T>=97)
+  look_at< -0.45*(1-(100-T)/3) , eyelevel, T+3 >
+#else
   look_at<0, eyelevel, T+3>
-  right x*image_width/image_height angle FOV}
+#end
+  right x*image_width/image_height angle FOV }
 #end
 //==================================================
