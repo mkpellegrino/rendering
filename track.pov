@@ -112,29 +112,29 @@ plane{<0,1,0>, 0.05 texture{pigment{color DarkGreen} normal{bumps 0.75 scale 0.2
 #declare ITERATOR=0;
 #while(ITERATOR<120)
 // right side
-object{treex07 rotate<0, rand(Random_1)*355,0>  scale (2+rand(Random_1)/10) translate<15+rand(Random_1),-0.001,ITERATOR>}
-object{treex01 rotate<0, rand(Random_1)*355,0> scale (2+rand(Random_1)/10) translate<25+rand(Random_1),-0.001,ITERATOR>}
+object{treex07 rotate<0, rand(Random_1)*355,0>  scale (2+rand(Random_1)/10) translate<15+rand(Random_1),-0.1,ITERATOR>}
+object{treex01 rotate<0, rand(Random_1)*355,0> scale (2+rand(Random_1)/10) translate<25+rand(Random_1),-0.1,ITERATOR>}
 
 // Middle
-object{treex01 rotate<0, rand(Random_1)*355,0>  scale (1+rand(Random_1)/10) translate<3+rand(Random_1),-0.001,ITERATOR>}
-object{treex03 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-3+rand(Random_1),-0.001,ITERATOR> }
-object{treex04 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-3+rand(Random_1),-0.001,ITERATOR+14> }
+object{treex01 rotate<0, rand(Random_1)*355,0>  scale (1+rand(Random_1)/10) translate<3+rand(Random_1),-0.01,ITERATOR>}
+object{treex03 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-3+rand(Random_1),-0.01,ITERATOR> }
+object{treex04 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-3+rand(Random_1),-0.01,ITERATOR+14> }
 
 // left side
-object{treex05 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-23+rand(Random_1),-0.001,ITERATOR> }
-object{treex06 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-17+rand(Random_1),-0.001,ITERATOR+3> }
+object{treex05 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-23+rand(Random_1),-0.01,ITERATOR> }
+object{treex06 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-17+rand(Random_1),-0.01,ITERATOR+3> }
 #declare ITERATOR=ITERATOR+28;
 #end // END WHILE
   
 //object {treex01 translate <0,0,10> scale 0.25}
 // put two trees to mark the start of the run
-object{treex02 rotate<0, rand(Random_1)*355,0> scale .25  translate<-2,-0.001,7>}
-object{treex02 rotate<0, rand(Random_1)*37,0> scale .3  translate<2,-0.001,7>}
+object{treex02 rotate<0, rand(Random_1)*355,0> scale .25  translate<-2,-0.01,7>}
+object{treex02 rotate<0, rand(Random_1)*37,0> scale .3  translate<2,-0.01,7>}
 
-object{treex05 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-17+rand(Random_1),-0.001,97> }
-object{treex07 rotate<0, rand(Random_1)*355,0> scale 0.35 translate<-17+rand(Random_1),-0.001,71> }
-object{treex08 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-17+rand(Random_1),-0.001,10> }
-object{treex08 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-18+rand(Random_1),-0.001,-10> }
+object{treex05 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-17+rand(Random_1),-0.01,97> }
+object{treex07 rotate<0, rand(Random_1)*355,0> scale 0.35 translate<-17+rand(Random_1),-0.01,71> }
+object{treex08 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-17+rand(Random_1),-0.01,10> }
+object{treex08 rotate<0, rand(Random_1)*355,0> scale 0.25 translate<-18+rand(Random_1),-0.01,-10> }
 #end // END IF(YES_TREES=1)
 
 
