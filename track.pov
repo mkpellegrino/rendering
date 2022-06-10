@@ -19,15 +19,15 @@ global_settings{assumed_gamma 1.0}
 #declare T180_FRAMES = 930;
 #declare STRAIGHTAWAY_FRAMES=3000;
 
-#declare BOT_MIDDLE_UP = 0;
-#declare TOP_MIDDLE_turn_left = BOT_MIDDLE_UP+STRAIGHTAWAY_FRAMES;
-#declare TOP_LEFT_down = TOP_MIDDLE_turn_left+T180_FRAMES;
-#declare BOT_LEFT_turn_left = TOP_LEFT_down+STRAIGHTAWAY_FRAMES;
-#declare BOT_MIDDLE_UP_2 = BOT_LEFT_turn_left +T180_FRAMES;
-#declare TOP_MIDDLE_turn_right = BOT_MIDDLE_UP_2+STRAIGHTAWAY_FRAMES;
-#declare TOP_RIGHT_down = TOP_MIDDLE_turn_right+T180_FRAMES;
-#declare BOT_RIGHT_turn_right = TOP_RIGHT_down+STRAIGHTAWAY_FRAMES;
-#declare END_OF_TRACK = BOT_RIGHT_turn_right+T180_FRAMES;
+#declare BOT_MIDDLE_UP = 0;                                          // starting at clock 0 - 1499
+#declare TOP_MIDDLE_turn_left = BOT_MIDDLE_UP+STRAIGHTAWAY_FRAMES;   // starting at clock 1500
+#declare TOP_LEFT_down = TOP_MIDDLE_turn_left+T180_FRAMES;           // starting at clock 1965
+#declare BOT_LEFT_turn_left = TOP_LEFT_down+STRAIGHTAWAY_FRAMES;     //      3465
+#declare BOT_MIDDLE_UP_2 = BOT_LEFT_turn_left +T180_FRAMES;          //      3930
+#declare TOP_MIDDLE_turn_right = BOT_MIDDLE_UP_2+STRAIGHTAWAY_FRAMES;//      5430
+#declare TOP_RIGHT_down = TOP_MIDDLE_turn_right+T180_FRAMES;         //      5895
+#declare BOT_RIGHT_turn_right = TOP_RIGHT_down+STRAIGHTAWAY_FRAMES;  //      7395
+#declare END_OF_TRACK = BOT_RIGHT_turn_right+T180_FRAMES;            //      7860
 
 #declare LOOK_AHEAD_DISTANCE = 3;
 
@@ -232,17 +232,20 @@ camera
 #if( my_clock = BOT_RIGHT_turn_right )
   #warning concat( "Bottom Right Turn Right (4th turn)" )
 #end
-
-#declare T=(2*pi)- (2*pi/T180_FRAMES)*(my_clock-BOT_RIGHT_turn_right);
+#declare T=(2*pi)- (pi/T180_FRAMES)*(my_clock-BOT_RIGHT_turn_right);
 camera
   {
     //location <10*cos(T)+10, eyelevel+bounce, -10*sin(T) > 
     location <circle_placementX( 10, 0, 10, T), eyelevel+bounce, circle_placementY(10, 0, 10, T )> 
     
 #if( T > 0.96*T180_FRAMES*(pi/T180_FRAMES)*(my_clock-TOP_MIDDLE_turn_left) )
+  #warning concat( "Nearing end of turn: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
+
     look_at<0,eyelevel-0.25,LOOK_AHEAD_DISTANCE>
 #else
   //look_at<10+14.14*cos(T+pi/4), eyelevel, -14.14*sin(T+pi/4) > 
+  #warning concat( "Turning T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
+
   look_at<circle_eyesX(10,0,10,T, LOOK_AHEAD_DISTANCE, -1), eyelevel, circle_eyesY(10,0,10,T, LOOK_AHEAD_DISTANCE, -1)> 
 #end
   right x*image_width/image_height angle FOV
@@ -261,8 +264,11 @@ camera
   {
     location <20, eyelevel + bounce + 3.5*get_altitude( 2*pi*T/100), 100-T>
     #if( T>=97 )
+      #warning concat( "Nearing end of straightaway: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
       look_at< 20-0.45*(1-(100-T)/3) , eyelevel, 100-T-LOOK_AHEAD_DISTANCE >
     #else
+      #warning concat( "Straightaway T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
+
       look_at <20, eyelevel + 3.5*get_altitude( 2*pi*(T-LOOK_AHEAD_DISTANCE)/100), 100-T-LOOK_AHEAD_DISTANCE>  
     #end
     right x*image_width/image_height angle FOV
@@ -275,14 +281,15 @@ camera
 #if( my_clock = TOP_MIDDLE_turn_right )
   #warning concat( "Top Middle Turn Right" )
 #end
-
 #declare T= pi-(pi)*(my_clock-TOP_MIDDLE_turn_right)/T180_FRAMES;
 camera
   {
     location <circle_placementX(10, 100, 10, T), eyelevel+bounce, circle_placementY(10, 100, 10, T) > 
     #if( T <= (0.04*pi))
-    look_at<20, eyelevel, circle_eyesY(10, 100, 10, T, LOOK_AHEAD_DISTANCE, -1) > 
+      #warning concat( "Nearing end of Turn T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
+      look_at<20, eyelevel, circle_eyesY(10, 100, 10, T, LOOK_AHEAD_DISTANCE, -1) > 
     #else
+    #warning concat( "Turning T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
     look_at<circle_eyesX(10, 100, 10, T, LOOK_AHEAD_DISTANCE, -1), eyelevel, circle_eyesY(10, 100, 10, T, LOOK_AHEAD_DISTANCE, -1) > 
     #end
     right x*image_width/image_height angle FOV
@@ -299,8 +306,10 @@ camera
     location <0,eyelevel+bounce,T>
     
     #if (T>=97)
+      #warning concat( "Starting Turn T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
       look_at< 0.45*(1-(100-T)/3) , eyelevel, T+LOOK_AHEAD_DISTANCE >
     #else
+      #warning concat( "STRAIGHTAWAY T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
       look_at<0, eyelevel, T+LOOK_AHEAD_DISTANCE>
     #end
     right x*image_width/image_height angle FOV
@@ -319,8 +328,11 @@ camera
     location <circle_placementX(-10, 0, 10, T), eyelevel+bounce, circle_placementY(-10, 0, 10, T)>
 
     #if( T > 0.95*2*pi )
+      #warning concat( "Starting to straighten out T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
+
       look_at<0,eyelevel,circle_eyesY(-10, 0, 10, T, LOOK_AHEAD_DISTANCE, 1)>
     #else
+      #warning concat( "Turning T: ", str(T, 0, 5 ), " clock: ", str( clock, 0, 5 ) )
       look_at<circle_eyesX(-10, 0, 10, T, 3, 1), eyelevel, circle_eyesY(-10, 0, 10, T, 3, 1) > 
       
     #end
