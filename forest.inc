@@ -1,24 +1,12 @@
-#include "colors.inc"
-#include "textures.inc"
-#include "stones.inc"
-#include "woods.inc"
+// Michael K. Pellegrino
+// 2022 06 12
 
-// ======================================================================
-// These functions are for the turning of the camera while looking at a specific point
-// that is a specified distance away on the z-axis (so that the 'bouce' is correct
-// and consistant all the way through
-#declare get_angle = function( r, d ) { acos( 1 - (d*d)/(2*r*r) ) };
-#declare circle_eyesX = function(center_X, center_Y, my_radius, my_angle, my_distance, which_wise ) { center_X + my_radius*cos(my_angle+which_wise*get_angle(my_radius, my_distance)) };
-#declare circle_eyesY = function(center_X, center_Y, my_radius, my_angle, my_distance, which_wise ){center_Y + my_radius*sin(my_angle+which_wise*get_angle(my_radius, my_distance))};
-#declare circle_placementX = function(center_X, center_Y, my_radius, my_angle ){center_X + my_radius*cos(my_angle)};
-#declare circle_placementY = function(center_X, center_Y, my_radius, my_angle ){center_Y + my_radius*sin(my_angle)};
-#declare get_altitude = function( T ){-1*cos( T ) + 1}; // T is theta (from 0 to 2pi)
-  
+// create_forest( bot_left x, bot_left z, width, depth, DENSITY (0=DENSE  1=EMPTY... 0.95 is sparse))
 #macro create_forest( a, b, w, h, d )
     #declare I=0;
 #while( I<=w )
   #declare J=0;
-  #while( J<=w )
+  #while( J<=h )
     
     #if( rand( Random_1 ) > d )
       #declare s1=4*rand(Random_1)-2;
