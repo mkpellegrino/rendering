@@ -74,8 +74,8 @@ int main()
       fprintf( fp, "Final_Clock=%d\n", ff );
 
       
-      fprintf( fp, "Height=480\n" );
       fprintf( fp, "Width=640\n" );
+      fprintf( fp, "Height=480\n" );
       fprintf( fp, "Verbose=true\n");
       fprintf( fp, "Output_to_File=true\n");
       name[l]='\0';
@@ -92,6 +92,7 @@ int main()
       fprintf( fp, "Library_Path=/Users/mpellegrino/PovRay3.7.0.8_Unofficial_Final/include\n");
       fprintf( fp, "Library_Path=/usr/local/share/povray3.7/include\n");
       fprintf( fp, "Library_Path=/usr/local/share/povray3.7/\n");
+      fprintf( fp, "/usr/share/fonts/truetype/povray/\n" );
       fprintf( fp, "Library_Path=.\n");
       fprintf( fp, "Library_Path=..\n");
       /* fprintf( fp, "\n"); */
