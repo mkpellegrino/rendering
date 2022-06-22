@@ -8,6 +8,7 @@ int my_strlen()
     {
       if( name[i] == 0 ) return i;
     }
+  return 10;
 }
 int main()
 {
@@ -83,12 +84,14 @@ int main()
       fprintf( fp, "Dither_Method=FS\n");
       fprintf( fp, "Input_File_Name=%s.pov\n", name); // THIS NEED TO BE SET
       fprintf( fp, "Render_Block_Size=64\n");
-      fprintf( fp, "Quality=\n", quality);
+      fprintf( fp, "Quality=%d\n", quality);
       fprintf( fp, "Antialias=true\n");
-      fprintf( fp, "Bits_Per_Color=16\n");
+      fprintf( fp, "Bits_Per_Color=8\n");
       fprintf( fp, "Display=false\n");
       fprintf( fp, "Jitter=false\n");
       fprintf( fp, "Library_Path=/Users/mpellegrino/PovRay3.7.0.8_Unofficial_Final/include\n");
+      fprintf( fp, "Library_Path=/usr/local/share/povray3.7/include\n");
+      fprintf( fp, "Library_Path=/usr/local/share/povray3.7/\n");
       fprintf( fp, "Library_Path=.\n");
       fprintf( fp, "Library_Path=..\n");
       /* fprintf( fp, "\n"); */
